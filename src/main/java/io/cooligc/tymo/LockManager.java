@@ -1,4 +1,4 @@
-package io.cooligc.scheduleit;
+package io.cooligc.tymo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +12,7 @@ import java.sql.Statement;
 
 public class LockManager {
     private static final Logger logger = LoggerFactory.getLogger(LockManager.class);
-    private final String dbUrl = "jdbc:h2:./scheduler-ha;AUTO_SERVER=TRUE;DB_CLOSE_DELAY=-1";
+    private final String dbUrl = "jdbc:h2:./scheduler-ha;DB_CLOSE_DELAY=-1";
     private final String user = "sa";
     private final String password = "";
 

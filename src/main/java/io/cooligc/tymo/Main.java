@@ -1,4 +1,4 @@
-package io.cooligc.scheduleit;
+package io.cooligc.tymo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

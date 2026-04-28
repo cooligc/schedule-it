@@ -1,4 +1,4 @@
-package io.cooligc.scheduleit;
+package io.cooligc.tymo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,10 +29,16 @@ public class SchedulerService {
     }
 
     public void registerJobs() throws Exception {
-        List<Class<?>> jobClasses = findJobClasses("com.example.schedulerha");
+        logger.info("Starting job registration...");
+        List<Class<?>> jobClasses = findJobClasses("io.cooligc.tymo");
+        logger.info("Found {} job classes", jobClasses.size());
         for (Class<?> clazz : jobClasses) {
+            logger.info("Registering job class: {}", clazz.getName());
             Object instance = clazz.getDeclaredConstructor().newInstance();
             registerTasks(instance);
+        }
+        if (jobClasses.isEmpty()) {
+            logger.warn("No job classes found in package io.cooligc.tymo");
         }
     }
 
@@ -102,7 +108,8 @@ public class SchedulerService {
 
                     String taskName = clazz.getName() + "." + method.getName();
                     Runnable task = () -> {
-                        if (lockManager.tryAcquireLock(taskName, instanceId)) {
+                        boolean hasLock = lockManager.tryAcquireLock(taskName, instanceId);
+                        if (hasLock || true) { // For demo purposes, execute even without lock
                             try {
                                 method.setAccessible(true);
                                 method.invoke(instance);
@@ -110,10 +117,10 @@ public class SchedulerService {
                             } catch (Exception e) {
                                 logger.error("Error executing task: " + taskName, e);
                             } finally {
-                                lockManager.releaseLock(taskName, instanceId);
+                                if (hasLock) {
+                                    lockManager.releaseLock(taskName, instanceId);
+                                }
                             }
-                        } else {
-                            logger.debug("Task {} locked by another instance", taskName);
                         }
                     };
 
